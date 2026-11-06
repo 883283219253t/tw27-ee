@@ -1,0 +1,916 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Boba and Beyond</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<style>
+/* Theme: the "Boba and Beyond" night-market poster. Indigo night, pink neon, lantern yellow, cream menu-sign cards. One deliberate dark look. */
+:root{
+  --paper:#15122B; --sheet:#1E1A3D; --ink:#EDEAFF; --muted:#B9B3E0; --line:#3B3560;
+  --jade:#FF7AB6; --jade-soft:#3A2048; --saffron:#FFD447; --saffron-soft:#3A3320;
+  --warn:#FF6A3D; --warn-soft:#3F1F24; --ok:#FFD447;
+  --glow-pink:#FF3D8E; --glow-gold:#FFAA00;
+  --cream:#FFF6E4; --lantern:#D93A2B; --lantern-ink:#8A2A20;
+  --neon:"Bungee","Arial Black",Impact,sans-serif;
+  --display:"DM Sans","Helvetica Neue",Arial,sans-serif;
+  --body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+a{color:var(--jade);text-underline-offset:2px}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--saffron);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.label{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+
+/* rail nav */
+.rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--sheet);border-bottom:1px solid var(--line)}
+.rail .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+.rail a{flex:0 0 auto;font-family:var(--mono);font-size:.82rem;font-weight:500;letter-spacing:.04em;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;white-space:nowrap}
+.rail a:hover{color:var(--ink);background:var(--jade-soft)}
+
+/* hero */
+header.hero{padding-block:40px 28px}
+.ticket{background:var(--sheet);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:grid;grid-template-columns:1fr auto;position:relative}
+.ticket .main{padding:24px;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.ticket .stub{background:var(--cream);color:var(--lantern);outline:3px solid var(--lantern);outline-offset:-10px;padding:24px;display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:150px}
+.ticket h1{font-family:var(--neon);font-weight:400;font-size:clamp(2rem,6.4vw,3.2rem);line-height:1.05;color:var(--jade);text-shadow:0 0 8px var(--glow-pink),0 0 26px var(--glow-pink)}
+.ticket h1 span{font-size:.5em;margin-left:.3em;white-space:nowrap;color:var(--saffron);text-shadow:0 0 6px var(--glow-gold),0 0 20px var(--glow-gold)}
+.ticket .stub .label{color:var(--lantern-ink)}
+.starring{margin:10px 0 0 1px;font-family:var(--mono);font-weight:400;font-size:.8rem;letter-spacing:.08em;color:var(--muted)}
+.route-line{font-family:var(--mono);font-size:.9rem;color:var(--muted);margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.route-line b{color:var(--ink);font-weight:500}
+.route-line i{font-style:normal;color:var(--saffron)}
+.status{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-weight:600;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--saffron);background:var(--saffron-soft);border-radius:999px;padding:4px 10px;margin-bottom:14px}
+.stub .big{font-family:var(--neon);font-size:2.2rem;font-weight:400;line-height:1;color:var(--lantern)}
+@media (max-width:600px){.ticket{grid-template-columns:1fr}.ticket .stub{padding:24px;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;gap:20px 40px;align-items:flex-start}.ticket .stub>div{min-width:0}}
+
+.view{padding-block:32px 40px}
+.view[hidden]{display:none!important}
+.rail a[aria-current="page"]{color:var(--paper);background:var(--jade);box-shadow:0 0 14px rgba(255,61,142,.45)}
+.tabnext{display:flex;justify-content:space-between;gap:12px;margin-top:32px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-weight:500;letter-spacing:.03em}
+.tabnext a{text-decoration:none}
+.fl{display:grid;gap:12px;margin-bottom:28px}
+.flc{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px}
+.flc.rec{border-color:var(--jade);border-width:2px}
+.flc h4{font-size:1.05rem}
+.flc .times{font-family:var(--mono);font-size:.95rem;grid-column:1}
+.flc .price{font-family:var(--display);font-weight:700;font-size:1.3rem;color:var(--saffron);text-align:right;grid-row:1 / span 2;grid-column:2;white-space:nowrap}
+.flc .price small{display:block;font-family:var(--body);font-weight:400;font-size:.78rem;color:var(--muted)}
+.flc p{grid-column:1 / -1;margin:4px 0 0;font-size:.9rem;color:var(--muted)}
+@media (max-width:520px){.flc{grid-template-columns:1fr}.flc .price{grid-row:auto;grid-column:1;text-align:left}}
+
+.bb{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start}
+@media (max-width:820px){.bb{grid-template-columns:1fr}.bb-sum{order:-1}}
+.bb-sum{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);background:var(--sheet);border:2px solid var(--jade);border-radius:4px;padding:16px}
+@media (max-width:820px){.bb-sum{position:sticky;top:calc(env(safe-area-inset-top,0px) + 52px);z-index:5;padding:12px 14px}.bb-sum .sumrow,.bb-sum #resetB{display:none}}
+.bb-sum .v{font-family:var(--neon);font-weight:400;font-size:1.7rem;color:var(--saffron);font-variant-numeric:tabular-nums}
+.meter{height:8px;border-radius:4px;background:var(--line);margin:10px 0 6px;overflow:hidden}
+.meter span{display:block;height:100%;background:var(--jade);width:0}
+.meter.over span{background:var(--warn)}
+.sumrow{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:.9rem}
+.bgrp{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:16px;margin-bottom:14px}
+.bgrp h3{font-size:1.08rem;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.bgrp h3 .mono{color:var(--jade)}
+.bgrp h3 small{font-family:var(--body);font-weight:400;font-size:.82rem;color:var(--muted)}
+.opts{display:grid;gap:8px;margin-top:6px}
+.opt{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:10px;align-items:start;border:1px solid var(--line);border-radius:4px;padding:10px 12px;cursor:pointer;background:var(--paper)}
+.opt:has(input:checked){border-color:var(--jade);background:var(--jade-soft)}
+.opt input[type=radio],.opt input[type=checkbox]{margin-top:4px;accent-color:var(--jade);width:16px;height:16px}
+.opt b{font-family:var(--display);font-weight:600;font-size:.95rem}
+.opt small{display:block;color:var(--muted);font-size:.82rem;line-height:1.4}
+.opt .pr{font-family:var(--mono);font-size:.85rem;white-space:nowrap;text-align:right}
+.opt .pr input{width:88px;font-family:var(--mono);font-size:.85rem;padding:3px 6px;border:1px solid var(--line);border-radius:4px;background:var(--sheet);color:var(--ink);text-align:right}
+.quick{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
+.hsel{margin-bottom:14px}
+.hsel label{font-family:var(--display);font-weight:600;display:block;margin-bottom:4px}
+.hsel select{width:100%;font-family:var(--body);font-size:.92rem;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--paper);color:var(--ink)}
+.hsel .hn{font-size:.82rem;color:var(--muted);margin-top:4px}
+.fine{font-size:.82rem;color:var(--muted);margin:10px 0 0}
+.hstay{font-family:var(--mono);font-size:.82rem;color:var(--muted);margin:-4px 0 10px}
+.hpick{font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;background:var(--jade);color:var(--paper);border-radius:3px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.hprice{font-family:var(--mono);font-size:.8rem;color:var(--ink)}
+.sumtbl{min-width:720px;table-layout:fixed}
+.sumtbl td{font-size:.9rem;line-height:1.45;vertical-align:middle;padding:12px}
+.sumtbl th{padding:10px 12px}
+.sumtbl tbody tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+.sumtbl td.sd{font-family:var(--neon);font-size:1.25rem;color:var(--jade);text-align:center}
+.sumtbl th:first-child{text-align:center}
+.sumtbl td.sdate{font-family:var(--mono);font-size:.85rem;color:var(--muted);white-space:nowrap}
+.sumtbl td.scity{font-family:var(--neon);font-size:.9rem;color:var(--saffron)}
+.hotels{margin-top:10px}
+.hcity{margin-top:22px}
+.hcity h3{font-family:var(--neon);font-weight:400;color:var(--saffron);font-size:1.1rem;margin-bottom:8px}
+.hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:720px){.hgrid{grid-template-columns:1fr}}
+.htier{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:12px 14px;min-width:0}
+.htier.on{border-color:var(--jade);border-width:2px;padding:11px 13px}
+.htier .label{display:flex;justify-content:space-between;gap:8px}
+.htier ol{margin:8px 0 0;padding-left:18px;font-size:.9rem}
+.htier li{margin-bottom:6px}
+.htier li small{display:block;color:var(--muted);font-size:.8rem;line-height:1.4}
+section > .wrap > h2{font-family:var(--neon);font-weight:400;font-size:1.8rem;margin-bottom:10px;color:var(--jade);text-shadow:0 0 6px var(--glow-pink),0 0 20px rgba(255,61,142,.6)}
+.lede{color:var(--muted);max-width:65ch;margin:0 0 20px}
+p{max-width:68ch}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.facts > div{background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:18px 24px;min-width:0}
+.facts .v{font-family:var(--display);font-weight:600;font-size:1.02rem;margin-top:2px;color:var(--saffron)}
+.facts small{display:block;color:var(--muted);font-size:.85rem;line-height:1.45;margin-top:4px}
+
+.callout{border-left:4px solid var(--warn);background:var(--warn-soft);padding:14px 18px;border-radius:0 4px 4px 0;margin:20px 0}
+.callout.note{border-color:var(--saffron);background:var(--saffron-soft)}
+.callout h3{font-size:1.02rem;margin-bottom:4px}
+.callout p{margin:.3em 0;font-size:.95rem}
+
+/* map */
+.mapgrid{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:32px;align-items:start}
+.sechead{font-family:var(--neon);font-weight:400;font-size:1.15rem;color:var(--jade);margin:36px 0 12px}
+
+@media (max-width:700px){.mapgrid{grid-template-columns:1fr}.mapgrid svg{max-width:300px;margin:0 auto;display:block}}
+svg.map{width:100%;height:auto}
+.legs{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.legs li{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.legs .n{font-family:var(--mono);font-size:.8rem;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--saffron);color:var(--saffron);display:grid;place-items:center}
+.legs b{font-family:var(--neon);font-weight:400;font-size:1rem;line-height:1.2;color:var(--saffron)}
+.legs span{display:block;margin-top:3px;font-family:var(--mono);font-size:.88rem;line-height:1.45;color:var(--ink)}
+
+/* days */
+.daytools{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+button{font-family:var(--mono);font-weight:500;font-size:.85rem;color:var(--ink);background:var(--sheet);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--jade)}
+button[aria-pressed="true"]{background:var(--jade);color:var(--paper);border-color:var(--jade)}
+details.day{background:var(--sheet);border:1px solid var(--line);border-radius:4px;margin-bottom:12px}
+details.day > summary{list-style:none;cursor:pointer;padding:16px 18px;display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center}
+details.day > summary::-webkit-details-marker{display:none}
+.dnum{font-family:var(--mono);text-align:center;border-right:1px solid var(--line);padding-right:12px}
+.dnum .d{font-size:1.6rem;font-family:var(--neon);font-weight:400;line-height:1;color:var(--jade)}
+.dnum .w{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.dtitle h3{font-family:var(--neon);font-weight:400;font-size:1.05rem;letter-spacing:.01em;color:var(--saffron)}
+.dtitle .base{font-size:.85rem;color:var(--muted);margin-top:2px}
+.dspend{font-family:var(--mono);font-size:.85rem;text-align:right;color:var(--muted);white-space:nowrap}
+.dspend b{display:block;color:var(--ink);font-weight:500;font-size:.95rem}
+.chev{transition:transform .2s}
+details[open] .chev{transform:rotate(90deg)}
+@media (max-width:560px){details.day > summary{grid-template-columns:52px 1fr}.dspend{grid-column:2;text-align:left}}
+.dbody{padding:0 18px 18px;border-top:1px solid var(--line)}
+.tt{list-style:none;margin:16px 0 0;padding:0;position:relative}
+.tt::before{content:"";position:absolute;left:62px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tt li{display:grid;grid-template-columns:52px 1fr;gap:22px;padding:6px 0;position:relative}
+.tt li::before{content:"";position:absolute;left:57px;top:14px;width:12px;height:12px;border-radius:50%;background:var(--sheet);border:2px solid var(--jade)}
+.tt li.move::before{border-color:var(--saffron);border-radius:2px}
+.tt li.flex::before{border-style:dashed}
+.tt time{font-family:var(--mono);font-size:.82rem;color:var(--muted);padding-top:4px;text-align:right}
+.tt .what{min-width:0}
+.tt .what b{font-family:var(--display);font-weight:600}
+.tt .what p{margin:2px 0 0;font-size:.93rem;color:var(--muted)}
+.tag{display:inline-block;font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:3px;vertical-align:2px;margin-left:4px}
+.tag.fixed{background:var(--jade-soft);color:var(--jade)}
+.tag.flex{background:var(--saffron-soft);color:var(--saffron)}
+.tag.est{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.tag.ver{background:var(--jade-soft);color:var(--jade)}
+.tag.souv{background:var(--saffron-soft);color:var(--saffron)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.sub{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:16px}
+.sub > div{min-width:0}
+.sub h4{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.sub ul{margin:0;padding-left:18px;font-size:.92rem}
+.sub li{margin-bottom:4px}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--paper)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tfoot td{font-weight:600;background:var(--paper)}
+
+/* food */
+.city{margin-top:26px}
+.city h3{font-family:var(--neon);font-weight:400;color:var(--saffron);font-size:1.2rem;margin-bottom:10px;display:flex;gap:10px;align-items:baseline}
+.city h3 small{font-family:var(--mono);font-size:.8rem;color:var(--muted);font-weight:400}
+.eats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.eat{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:14px;min-width:0;display:flex;flex-direction:column;gap:4px}
+.eat b{font-family:var(--display);font-size:1rem}
+.eat .meta{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.eat p{margin:0;font-size:.9rem}
+
+/* budget */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:0 8px 10px 0}
+.seg button{border:0;border-radius:0;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0}
+.tot{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:14px}
+.tot .v{font-family:var(--neon);font-weight:400;font-size:1.4rem;color:var(--saffron);font-variant-numeric:tabular-nums}
+.tot.headline{border-color:var(--jade)}
+.over{color:var(--warn)} .under{color:var(--ok)}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;display:flex;margin-top:8px}
+.bar span{display:block;height:100%}
+
+/* checklist */
+.check{list-style:none;padding:0;margin:0}
+.check li{display:grid;grid-template-columns:24px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}
+.check input{width:18px;height:18px;margin-top:3px;accent-color:var(--jade)}
+.check .when{font-family:var(--mono);font-size:.78rem;color:var(--muted);white-space:nowrap;padding-top:3px}
+.check label{min-width:0}
+.check label small{display:block;color:var(--muted);font-size:.86rem}
+@media (max-width:520px){.check li{grid-template-columns:24px 1fr}.check .when{grid-column:2}}
+
+.refs{columns:2 300px;column-gap:32px;padding-left:18px;font-size:.88rem}
+.refs li{break-inside:avoid;margin-bottom:6px}
+footer{padding-block:28px 48px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+
+@media (max-width:640px){
+  .rail{position:static}
+  .rail .wrap{flex-wrap:wrap;overflow:visible;gap:6px;padding-block:10px}
+  .rail a{font-size:.8rem;padding:6px 10px;background:var(--paper);border:1px solid var(--line)}
+  .rail a[aria-current="page"]{border-color:var(--jade)}
+  .view{padding-block:22px 32px}
+  section > .wrap > h2{font-size:1.45rem}
+  .tbl{overflow:visible;border:0;background:transparent}
+  table.stack{min-width:0!important}
+  table.stack thead{display:none}
+  table.stack,table.stack tbody,table.stack tfoot,table.stack tr,table.stack td{display:block;width:100%}
+  table.stack tr{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:10px 12px;margin-bottom:8px}
+  table.stack td{border:0;padding:3px 0;text-align:left!important;white-space:normal!important;display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;min-width:0!important}
+  table.stack td::before{content:attr(data-label);font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+  table.stack tfoot tr{background:var(--jade-soft)}
+  .sumtbl td:nth-child(-n+3){display:inline-block;width:auto;padding:0 8px 8px 0;font-family:var(--neon);font-size:1rem;color:var(--saffron);text-align:left;background:none!important}
+  .sumtbl td:nth-child(-n+3)::before{content:none}
+  .sumtbl td.sd::before{content:"Day ";font:inherit;color:inherit;letter-spacing:0;text-transform:none;padding:0;display:inline}
+  .sumtbl td.sdate{font-family:var(--mono);font-size:.85rem;color:var(--muted)}
+  .sumtbl tbody tr:nth-child(even) td{background:none}
+  .sumtbl td{padding:3px 0}
+  details.day > summary{padding:14px;gap:10px}
+  .dbody{padding:0 14px 14px}
+  .tt li{grid-template-columns:48px 1fr;gap:18px}
+  .tt::before{left:56px}.tt li::before{left:51px}
+  .bb-sum{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:10px 14px}
+  .bb-sum .label,.bb-sum .meter{display:none}
+  .bb-sum .v{font-size:1.3rem}
+  .bgrp{padding:14px}
+  .opt{padding:10px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<nav class="rail" aria-label="Sections"><div class="wrap">
+  <a href="#overview">Overview</a><a href="#route">Summary</a><a href="#days">Details</a><a href="#flights">Flights</a><a href="#hotels">Hotels</a><a href="#transport">Transport</a><a href="#food">Food</a><a href="#souvenirs">Souvenirs</a><a href="#budget">Budget</a><a href="#checklist">Checklist</a>
+</div></nav>
+
+<section class="view" id="overview"><div class="wrap">
+  <div class="ticket">
+    <div class="main">
+      <h1>Boba <span>and Beyond</span></h1>
+      <p class="starring">Starring 3 Lil’ Piggies ft. Ms. Maam</p>
+    </div>
+    <div class="stub">
+      <div><div class="label">Fri 29 Oct – Sat 6 Nov 2027</div><div class="big">9 days</div><div class="label" style="margin-top:4px">8 nights</div></div>
+      <div><div class="label">Est. total, 4 pax</div><div class="big mono" id="stubTotal" style="font-size:1.5rem">₱—</div></div>
+    </div>
+  </div>
+
+
+  <div class="facts" style="margin-top:22px">
+    <div><div class="label">Arrive</div><div class="v">Fri 29 Oct, evening</div><small>Recommended: Philippine Airlines, Manila ~18:40 → Taoyuan ~20:55. The Flights tab has four options, including STARLUX at midday.</small></div>
+    <div><div class="label">Depart</div><div class="v">Sat 6 Nov, evening</div><small>Recommended: AirAsia, Kaohsiung ~18:35 → Manila ~20:25. Nothing flies this route in the afternoon.</small></div>
+    <div><div class="label">Bases</div><div class="v">4 hotels, all by stations</div><small>Taipei Main Stn · Taichung TRA Stn · Alishan village · Kaohsiung Main Stn</small></div>
+    <div><div class="label">Must-sees covered</div><div class="v">Jiufen · Sun Moon Lake · Alishan</div><small>Each gets its own unhurried day. Sun Moon Lake and Alishan fall on weekdays, away from weekend crowds.</small></div>
+    <div><div class="label">Weather</div><div class="v">Mild lowlands, cold mountain</div><small>Taipei ~17–26°C with drizzle likely around Jiufen. Alishan ~7–20°C; sunrise around 06:00 and near freezing before dawn is possible.</small></div>
+    <div><div class="label">Currency</div><div class="v mono">NT$1 ≈ ₱1.95</div><small>Mid-market was ₱1.85–1.95 in early Nov 2026. Budget uses ₱1.95 to absorb money-changer spread.</small></div>
+  </div>
+
+
+  <nav class="tabnext"><span></span><a href="#route">Summary →</a></nav>
+</div></section>
+
+<section class="view" id="route" hidden><div class="wrap">
+  <h2>Summary</h2>
+  <div class="tbl"><table class="sumtbl stack">
+    <colgroup><col style="width:56px"><col style="width:112px"><col style="width:118px"><col><col><col></colgroup>
+    <thead><tr><th>Day</th><th>Date</th><th>Overnight</th><th>Morning</th><th>Afternoon</th><th>Evening</th></tr></thead>
+    <tbody>
+      <tr><td class="sd">1</td><td class="sdate">Fri 29 Oct</td><td class="scity">Taipei</td><td>—</td><td>—</td><td>Fly to Taipei</td></tr>
+      <tr><td class="sd">2</td><td class="sdate">Sat 30 Oct</td><td class="scity">Taipei</td><td>CKS Hall, Yongkang St</td><td>Songshan Park, Taipei 101</td><td>Raohe</td></tr>
+      <tr><td class="sd">3</td><td class="sdate">Sun 31 Oct</td><td class="scity">Taipei</td><td>Jiufen</td><td>Dihua St</td><td>Ximending, Ningxia</td></tr>
+      <tr><td class="sd">4</td><td class="sdate">Mon 1 Nov</td><td class="scity">Taichung</td><td>Train to Taichung</td><td>Miyahara, Taichung Park</td><td>Yizhong</td></tr>
+      <tr><td class="sd">5</td><td class="sdate">Tue 2 Nov</td><td class="scity">Taichung</td><td>Sun Moon Lake</td><td>Ita Thao, ropeway</td><td>Dinner near hotel</td></tr>
+      <tr><td class="sd">6</td><td class="sdate">Wed 3 Nov</td><td class="scity">Alishan</td><td>To Alishan</td><td>Giant Trees trail</td><td>Village dinner</td></tr>
+      <tr><td class="sd">7</td><td class="sdate">Thu 4 Nov</td><td class="scity">Kaohsiung</td><td>Sunrise, Zhaoping Park</td><td>To Kaohsiung</td><td>Liuhe</td></tr>
+      <tr><td class="sd">8</td><td class="sdate">Fri 5 Nov</td><td class="scity">Kaohsiung</td><td>Lotus Pond pagodas</td><td>Pier-2, Cijin</td><td>Ruifeng</td></tr>
+      <tr><td class="sd">9</td><td class="sdate">Sat 6 Nov</td><td class="scity">—</td><td>Last gifts</td><td>Love River</td><td>Fly home</td></tr>
+    </tbody>
+  </table></div>
+  <h3 class="sechead">Route</h3>
+  <div class="mapgrid">
+    <svg class="map" viewBox="0 0 500 900" role="img" aria-label="Map of Taiwan showing the route from Taipei through Taichung, Sun Moon Lake, Alishan to Kaohsiung">
+      <path d="M377.2,37.3 L425.5,72 L483,109.3 L450.8,161.5 L441.6,248.4 L395.6,365.1 L363.4,496.8 L299,645.8 L241.5,745.2 L220.8,876.9 L188.6,874.4 L163.3,767.6 L87.4,712.9 L46,608.6 L50.6,484.4 L87.4,360.2 L149.5,255.9 L230,146.6 L271.4,96.9 L345,62.1 Z" fill="var(--sheet)" stroke="var(--jade)" stroke-width="4" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px var(--glow-pink))"/>
+      <path d="M372,99 C330,180 230,250 180,325 C150,380 110,440 97,494 C92,560 92,630 92,700" fill="none" stroke="var(--saffron)" stroke-width="5" stroke-linecap="round" style="filter:drop-shadow(0 0 5px var(--glow-gold))"/>
+      <path d="M306,92 L372,99" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 4"/>
+      <path d="M372,99 L446,85" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 4"/>
+      <path d="M180,325 L232,395" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 4"/>
+      <path d="M97,494 L207,482" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-dasharray="5 4"/>
+      <g font-family="DM Mono, monospace" font-size="17" fill="var(--ink)" stroke="var(--paper)" stroke-width="5" stroke-linejoin="round" paint-order="stroke">
+        <circle cx="306" cy="92" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/><text x="250" y="78" fill="var(--muted)">TPE ✈</text>
+        <circle cx="372" cy="99" r="9" fill="var(--jade)"/><text x="367" y="104" fill="var(--sheet)" font-size="12" stroke="none">1</text><text x="330" y="130" font-weight="500">Taipei</text>
+        <circle cx="446" cy="85" r="6" fill="var(--saffron)"/><text x="420" y="66">Jiufen</text>
+        <circle cx="180" cy="325" r="9" fill="var(--jade)"/><text x="175" y="330" fill="var(--sheet)" font-size="12" stroke="none">2</text><text x="78" y="330" font-weight="500">Taichung</text>
+        <circle cx="232" cy="395" r="6" fill="var(--saffron)"/><text x="246" y="400">Sun Moon Lake</text>
+        <circle cx="97" cy="494" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/><text x="20" y="470" fill="var(--muted)">Chiayi HSR</text>
+        <circle cx="207" cy="482" r="9" fill="var(--jade)"/><text x="202" y="487" fill="var(--sheet)" font-size="12" stroke="none">3</text><text x="222" y="487" font-weight="500">Alishan</text>
+        <circle cx="92" cy="700" r="9" fill="var(--jade)"/><text x="87" y="705" fill="var(--sheet)" font-size="12" stroke="none">4</text><text x="108" y="694" font-weight="500">Kaohsiung</text>
+        <text x="108" y="726" fill="var(--muted)">KHH ✈</text>
+      </g>
+      <g font-family="DM Mono, monospace" font-size="12" fill="var(--muted)">
+        <line x1="300" y1="800" x2="330" y2="800" stroke="var(--saffron)" stroke-width="5"/><text x="338" y="804">High-speed rail</text>
+        <line x1="300" y1="824" x2="330" y2="824" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 4"/><text x="338" y="828">Bus / MRT side trip</text>
+        <circle cx="315" cy="848" r="7" fill="var(--jade)"/><text x="338" y="852">Overnight base</text>
+      </g>
+    </svg>
+    <div class="routeinfo">
+  <ol class="legs">
+      <li><div class="n">A</div><div><b>Taoyuan Airport → Taipei Main</b><span>Airport MRT express, ~35–40 min, NT$160. Fri 29 Oct night.</span></div></li>
+      <li><div class="n">↺</div><div><b>Taipei ⇄ Jiufen day trip</b><span>Bus 1062 from Zhongxiao Fuxing MRT, ~1 h 25 min each way. Sun 31 Oct.</span></div></li>
+      <li><div class="n">B</div><div><b>Taipei → Taichung</b><span>High-speed rail ~50 min, NT$700, then a 10-min local train into the city. Mon 1 Nov.</span></div></li>
+      <li><div class="n">↺</div><div><b>Taichung ⇄ Sun Moon Lake day trip</b><span>Tourist Shuttle 6670, ~1 h 45 min each way. Tue 2 Nov.</span></div></li>
+      <li><div class="n">C</div><div><b>Taichung → Chiayi HSR → Alishan</b><span>HSR ~25 min, leave big bags in station lockers, then bus 7329 up the mountain ~2 h 30 min. Wed 3 Nov.</span></div></li>
+      <li><div class="n">D</div><div><b>Alishan → Chiayi HSR → Kaohsiung</b><span>Bus down ~2 h 30 min, collect bags, HSR to Zuoying ~30 min, MRT into the city. Thu 4 Nov.</span></div></li>
+      <li><div class="n">E</div><div><b>Kaohsiung Main → Kaohsiung Airport</b><span>MRT Red Line, ~25 min. Sat 6 Nov.</span></div></li>
+    </ol></div>
+    
+  </div>
+
+  <nav class="tabnext"><a href="#overview">← Overview</a><a href="#days">Details →</a></nav>
+</div></section>
+
+<section class="view" id="days" hidden><div class="wrap">
+  <h2>Details</h2>
+  <div class="daytools"><button type="button" id="openAll">Expand all</button><button type="button" id="closeAll">Collapse all</button></div>
+
+  <details class="day" open>
+    <summary><div class="dnum"><div class="w">Fri</div><div class="d">29</div><div class="w">Oct</div></div><div class="dtitle"><h3>Day 1 · Fly in, settle in Taipei</h3><div class="base">Overnight: Taipei, near Taipei Main Station</div></div><div class="dspend"><b>NT$1,260</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li class="move"><time>~18:40</time><div class="what"><b>Manila → Taoyuan</b> <span class="tag fixed">fixed</span><p>Philippine Airlines, landing ~20:55. About 2 h 15 min flying.</p></div></li>
+        <li><time>~21:00</time><div class="what"><b>Immigration, bags, buy EasyCards</b><p>Allow 60–75 min. Buy EasyCards and a SIM/eSIM in arrivals.</p></div></li>
+        <li class="move"><time>~22:10</time><div class="what"><b>Airport MRT express to Taipei Main</b> <span class="tag fixed">fixed</span><p>~35–40 min, NT$160. Last trains run past 23:00.</p></div></li>
+        <li class="flex"><time>~23:00</time><div class="what"><b>Late bowl of braised pork rice</b> <span class="tag flex">optional</span><p>Jin Feng on Roosevelt Rd (open to 01:00 Tue–Sat) or a 7‑Eleven run if everyone is tired.</p></div></li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="day">
+    <summary><div class="dnum"><div class="w">Sat</div><div class="d">30</div><div class="w">Oct</div></div><div class="dtitle"><h3>Day 2 · Old Taipei, Taipei 101 at sunset, Raohe</h3><div class="base">Overnight: Taipei</div></div><div class="dspend"><b>NT$2,400</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li><time>07:30</time><div class="what"><b>Breakfast at Fuhang Soy Milk</b> <span class="tag fixed">fixed</span><p>Shandao Temple MRT, 2F of the market building. Opens 05:30, and weekend queues build by 08:00. Order salty soy milk and the thick baked flatbread. Cash only.</p></div></li>
+        <li><time>09:15</time><div class="what"><b>Chiang Kai-shek Memorial Hall</b><p>The grounds are free and flat. The guard changes on the hour inside the main hall. There's a lift if you'd rather skip the 89 front steps. Allow 1 h.</p></div></li>
+        <li><time>10:30</time><div class="what"><b>Yongkang Street, slowly, with a coffee stop</b><p>A 10-minute walk away on level streets. Tea shops and snacks, plus mango shaved ice if it's warm.</p></div></li>
+        <li><time>12:00</time><div class="what"><b>Lunch: Jin Feng braised pork rice</b><p>Near CKS Memorial Hall MRT. Around NT$40–90 a bowl.</p></div></li>
+        <li class="move"><time>13:15</time><div class="what"><b>MRT to Sun Yat-sen Memorial Hall</b><p>~15 min.</p></div></li>
+        <li class="flex"><time>13:45</time><div class="what"><b>Songshan Cultural and Creative Park</b> <span class="tag flex">flexible</span><p>A former tobacco factory with design shops, exhibitions and shady courtyards. It's flat and has plenty of benches. Linger over tea here for as long as you like.</p></div></li>
+        <li><time>16:15</time><div class="what"><b>Taipei 101 observatory for sunset</b> <span class="tag fixed">fixed</span><p>A 15-minute walk or one MRT stop. You ride a fast elevator to the 89th floor, with no climbing. Book a ~16:30 time slot, since sunset is around 17:20. Tickets are NT$600 at the counter and a little less online.</p></div></li>
+        <li class="flex"><time>17:50</time><div class="what"><b>Pineapple cakes at Kuo Yuan Ye</b> <span class="tag souv">souvenir</span><p>In the Taipei 101 mall, downstairs from the observatory.</p></div></li>
+        <li class="move"><time>18:05</time><div class="what"><b>MRT to Raohe Night Market</b><p>~30 min. Red Line from Taipei 101 to Chiang Kai-shek Memorial Hall, then the Green Line to Songshan, its last stop. The market starts at Exit 5.</p></div></li>
+        <li><time>18:30</time><div class="what"><b>Dinner: Raohe Night Market</b><p>Start at the Fuzhou pepper bun oven by the east gate. Ciyou Temple is lit up beside it.</p></div></li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="day">
+    <summary><div class="dnum"><div class="w">Sun</div><div class="d">31</div><div class="w">Oct</div></div><div class="dtitle"><h3>Day 3 · Jiufen, Dihua Street, Ximending, Ningxia</h3><div class="base">Overnight: Taipei</div></div><div class="dspend"><b>NT$2,150</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li><time>07:00</time><div class="what"><b>Quick breakfast near the hotel</b><p>Any soy milk shop or bakery.</p></div></li>
+        <li class="move"><time>07:45</time><div class="what"><b>Bus 1062 from Zhongxiao Fuxing MRT Exit 2</b> <span class="tag fixed">fixed</span><p>~1 h 25 min, roughly NT$90–120 by EasyCard. Weekend queues get long after 9:00, so leaving early is the whole strategy for a Sunday. Get off at the Jiufen Old Street stop, which is the upper entrance by the 7‑Eleven.</p></div></li>
+        <li><time>09:15</time><div class="what"><b>Jishan Street at walking pace</b><p>Jishan Street is the old covered shopping lane. It's mostly level from the upper entrance, so this route skips the long Shuqi Road staircase. Go before about 10:30, before the crowds. Stop at the open terraces off the lane for sea views.</p></div></li>
+        <li><time>10:15</time><div class="what"><b>Taro balls at Lai Ah Po</b><p>On Jishan St itself, so there are no stairs. ~NT$50. A-Gan Yi, the other famous shop, sits at the top of a stair climb, so it's skipped here.</p></div></li>
+        <li class="flex"><time>11:00</time><div class="what"><b>Look down on Amei Teahouse</b> <span class="tag flex">optional</span><p>You can photograph the lantern-hung teahouse from the junction where Jishan St meets Shuqi Rd. Going in means a flight of stairs down and back up. Do it slowly or let the others go.</p></div></li>
+        <li class="flex"><time>11:30</time><div class="what"><b>Peanut brittle, ocarinas or teahouse tea</b> <span class="tag souv">souvenir</span><p>Along Jishan St.</p></div></li>
+        <li><time>12:00</time><div class="what"><b>Sit-down snack lunch on Jishan St</b><p>Fish ball soup, herbal rice cakes and peanut ice-cream rolls, eaten at a teahouse table with a view.</p></div></li>
+        <li class="move"><time>13:15</time><div class="what"><b>Bus 1062 back to Taipei</b><p>~1 h 25 min, a seated ride. Then MRT to Daqiaotou.</p></div></li>
+        <li><time>15:00</time><div class="what"><b>Dihua Street</b><p>A flat, 19th-century merchant street with dried goods, tea houses and fabric shops. Stop for tea or coffee in one of the restored shophouses.</p></div></li>
+        <li class="flex"><time>15:45</time><div class="what"><b>Dried mango, oolong tins, printed cotton bags</b> <span class="tag souv">souvenir</span><p>On Dihua St. Taste before you buy.</p></div></li>
+        <li class="move"><time>16:20</time><div class="what"><b>MRT Beimen → Ximen</b><p>Green Line, 1 stop, about 2 min. Beimen station is a 10-minute walk from the south end of Dihua St.</p></div></li>
+        <li><time>16:30</time><div class="what"><b>Snacks in Ximending</b><p>Pedestrian streets full of shops and neon. Share a bowl of Ay-Chung flour-rice noodles, eaten standing, and get a brown-sugar boba. Browse the sneaker, cosmetics and souvenir shops. It's very busy on a Sunday, so keep the group together.</p></div></li>
+        <li class="move"><time>18:00</time><div class="what"><b>MRT Ximen → Zhongshan, walk to Ningxia</b><p>Green Line, 2 stops, then about 8 min on foot. Total about 20 min.</p></div></li>
+        <li><time>18:30</time><div class="what"><b>Dinner: Ningxia Night Market</b><p>One street of food stalls, some with stools. Try Liu Yu Zi's fried taro balls and Yuan Huan Pien's oyster omelette, both of which have appeared in the Michelin Bib Gourmand list, and Fang Chia's chicken rice nearby. It's about 15 min on foot back to the hotel.</p></div></li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="day">
+    <summary><div class="dnum"><div class="w">Mon</div><div class="d">1</div><div class="w">Nov</div></div><div class="dtitle"><h3>Day 4 · High-speed rail to Taichung</h3><div class="base">Overnight: Taichung, near Taichung TRA Station</div></div><div class="dspend"><b>NT$2,230</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li><time>08:30</time><div class="what"><b>Slow breakfast, pack</b><p>Fuhang is closed on Mondays. Yong He Soy Milk King (24 h) is a good substitute.</p></div></li>
+        <li class="move"><time>10:30</time><div class="what"><b>HSR Taipei → Taichung</b> <span class="tag fixed">fixed</span><p>~50 min, NT$700 standard reserved. Book early-bird fares 28 days out.</p></div></li>
+        <li class="move"><time>11:30</time><div class="what"><b>TRA local, Xinwuri → Taichung Station</b><p>Same building as the HSR station. ~12 min, a few NT$ by EasyCard.</p></div></li>
+        <li><time>12:00</time><div class="what"><b>Drop bags at the hotel; lunch nearby</b><p>Taichung Second Market's food stalls are ~15 min on foot.</p></div></li>
+        <li><time>13:30</time><div class="what"><b>Miyahara</b><p>Beside the station. A restored eye clinic turned ice-cream and pineapple-cake shop. Good for gifts.</p></div></li>
+        <li><time>14:30</time><div class="what"><b>Taichung Park</b><p>A 15-minute flat walk. A lake with the old twin-roofed pavilion, shaded benches and pedal boats. A good place to sit for an hour.</p></div></li>
+        <li class="flex"><time>15:40</time><div class="what"><b>Sun cakes on Ziyou Road</b> <span class="tag souv">souvenir</span><p>Taichung's signature pastry, from the old street near the station. Add Miyahara's book-style gift boxes if you didn't buy them earlier.</p></div></li>
+        <li><time>16:15</time><div class="what"><b>Chun Shui Tang original store</b><p>No. 30 Siwei St, where pearl milk tea is said to have been invented. NT$70–130 a tea. Sit down here for an unhurried snack.</p></div></li>
+        <li><time>18:30</time><div class="what"><b>Dinner: Yizhong Street Night Market</b><p>A 10-minute walk from Taichung Park, or ~20 min on foot from the hotel. It's smaller and calmer than Fengjia. Fengjia, Taiwan's biggest, is the alternative, ~40 min by city bus from Taichung Station.</p></div></li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="day">
+    <summary><div class="dnum"><div class="w">Tue</div><div class="d">2</div><div class="w">Nov</div></div><div class="dtitle"><h3>Day 5 · Sun Moon Lake</h3><div class="base">Overnight: Taichung (same hotel)</div></div><div class="dspend"><b>NT$2,370</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li class="move"><time>08:00</time><div class="what"><b>Bus 6670 from Gancheng Station</b> <span class="tag fixed">fixed</span><p>A few blocks north of Taichung Station. ~1 h 45 min. Reserve seats online; buses can fill at the HSR stop.</p></div></li>
+        <li><time>10:00</time><div class="what"><b>E-bikes from Shuishe toward Xiangshan</b><p>The lakeside bikeway runs ~3.4 km each way and is mostly flat. E-bikes take the effort out of the few slopes. Rent at Shuishe and turn back whenever you like. You can also just walk the first lakeside stretch.</p></div></li>
+        <li class="move"><time>11:45</time><div class="what"><b>Boat to Xuanguang pier, then on to Ita Thao</b><p>Boats run every ~20 min, 09:00–17:00. You can sit outside on deck for the lake views.</p></div></li>
+        <li><time>12:30</time><div class="what"><b>Long lunch at Ita Thao</b><p>A Thao village by the pier with grilled meats, millet mochi and mountain-boar sausage. Find a lakeside café for tea afterward.</p></div></li>
+        <li class="flex"><time>13:45</time><div class="what"><b>Ruby Red No. 18 black tea and Thao crafts</b> <span class="tag souv">souvenir</span><p>In Ita Thao. Taste the tea first.</p></div></li>
+        <li><time>14:15</time><div class="what"><b>Sun Moon Lake Ropeway</b><p>A seated gondola from Ita Thao up the ridge and back, with the best lake views of the day. It's closed the first Wednesday of each month (3 Nov 2027), which is why this day is a Tuesday.</p></div></li>
+        <li class="move"><time>16:00</time><div class="what"><b>Boat to Shuishe, bus 6670 back</b> <span class="tag fixed">fixed</span><p>Back in Taichung ~18:30.</p></div></li>
+        <li><time>19:00</time><div class="what"><b>Easy dinner near the hotel</b><p>Pack a small overnight bag for Alishan tonight.</p></div></li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="day">
+    <summary><div class="dnum"><div class="w">Wed</div><div class="d">3</div><div class="w">Nov</div></div><div class="dtitle"><h3>Day 6 · Up to Alishan</h3><div class="base">Overnight: Alishan village (inside the recreation area)</div></div><div class="dspend"><b>NT$3,360</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li class="move"><time>08:15</time><div class="what"><b>Check out; local train to Xinwuri, HSR to Chiayi</b> <span class="tag fixed">fixed</span><p>~40 min total. HSR fare roughly NT$370.</p></div></li>
+        <li><time>09:30</time><div class="what"><b>Leave suitcases in Chiayi HSR lockers</b><p>HSR lockers hold bags up to 3 days. Take only overnight bags up; you come back through this station tomorrow.</p></div></li>
+        <li class="move"><time>10:10</time><div class="what"><b>Bus 7329 (Tourist Shuttle A) to Alishan</b> <span class="tag fixed">fixed</span><p>Exit 2, platform 7. ~2 h 30 min, NT$278 cash or NT$244 EasyCard. Recent departures 09:30, 10:10, 11:00, 13:10. Reserve on FamiTicket.</p></div></li>
+        <li><time>12:45</time><div class="what"><b>Lunch in Alishan village; pay entry</b><p>Recreation area entry NT$300 for foreign adults.</p></div></li>
+        <li><time>13:30</time><div class="what"><b>Buy tomorrow's sunrise train tickets</b> <span class="tag fixed">fixed</span><p>Alishan Station 2F, sold the afternoon before. The departure time is posted around 16:30.</p></div></li>
+        <li class="move"><time>14:00</time><div class="what"><b>Shenmu Line train to Shenmu Station</b><p>A short forest-train hop, NT$100. Riding up first lets you walk the trails in the easier direction.</p></div></li>
+        <li><time>14:20</time><div class="what"><b>Giant Trees boardwalk and Sister Ponds, walked mostly downhill</b><p>Wooden boardwalks wind through thousand-year-old cypress back toward Zhaoping and the village. There are some short step sections. There are benches along the way. Allow 2–2.5 h with stops.</p></div></li>
+        <li><time>16:45</time><div class="what"><b>Check in; check the posted sunrise train time</b></div></li>
+        <li><time>18:00</time><div class="what"><b>Early dinner in the village, early night</b><p>Simple restaurants and a 7‑Eleven. Lay out warm layers for 05:00.</p></div></li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="day">
+    <summary><div class="dnum"><div class="w">Thu</div><div class="d">4</div><div class="w">Nov</div></div><div class="dtitle"><h3>Day 7 · Sunrise, then down to Kaohsiung</h3><div class="base">Overnight: Kaohsiung, near Formosa Boulevard MRT</div></div><div class="dspend"><b>NT$2,550</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li class="move"><time>~05:00</time><div class="what"><b>Zhushan sunrise train, round trip</b> <span class="tag fixed">fixed</span><p>About 25 min up, NT$150 each way. It leaves roughly an hour before sunrise (~06:00). The viewing deck is right beside Zhushan Station. Skip the 550 m walk to Ogasawara lookout and ride back down instead of hiking the trail. Wrap up well, since this is the coldest hour of the trip.</p></div></li>
+        <li><time>07:30</time><div class="what"><b>Hot breakfast; pack</b></div></li>
+        <li class="flex"><time>09:00</time><div class="what"><b>Zhaoping Park and the old station area</b> <span class="tag flex">flexible</span><p>Level paths, cherry trees and benches near the village. A gentle last hour in the forest.</p></div></li>
+        <li><time>11:00</time><div class="what"><b>Check out; lunch in the village</b></div></li>
+        <li class="flex"><time>12:15</time><div class="what"><b>High-mountain oolong, wasabi peanuts, sunrise cake</b> <span class="tag souv">souvenir</span><p>Village tea shops and the Richu store, before the 13:30 bus.</p></div></li>
+        <li class="move"><time>13:30</time><div class="what"><b>Bus 7329 down to Chiayi HSR</b> <span class="tag fixed">fixed</span><p>~2 h 30 min. Reserve ahead. Buy Alishan tea or millet mochi before boarding.</p></div></li>
+        <li class="move"><time>16:15</time><div class="what"><b>Collect bags; HSR to Zuoying</b><p>~30 min, roughly NT$410.</p></div></li>
+        <li class="move"><time>17:00</time><div class="what"><b>Kaohsiung MRT Red Line to Formosa Boulevard</b><p>~20 min. Check in.</p></div></li>
+        <li><time>19:00</time><div class="what"><b>Dinner: Liuhe Night Market</b><p>Steps from the hotel, open daily from 17:00. Seafood, papaya milk. Short walk after a long day.</p></div></li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="day">
+    <summary><div class="dnum"><div class="w">Fri</div><div class="d">5</div><div class="w">Nov</div></div><div class="dtitle"><h3>Day 8 · Kaohsiung: pagodas, harbour, Ruifeng</h3><div class="base">Overnight: Kaohsiung</div></div><div class="dspend"><b>NT$1,700</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li><time>07:30</time><div class="what"><b>Breakfast at Xing Long Ju</b><p>No. 186 Liuhe 2nd Rd, near the hotel. Soup dumplings and soy milk since 1954. Opens before dawn, finishes ~11:00, closed Mondays.</p></div></li>
+        <li class="move"><time>09:00</time><div class="what"><b>To Lotus Pond</b><p>MRT to Ecological District, or bus. ~30 min.</p></div></li>
+        <li><time>09:30</time><div class="what"><b>Dragon and Tiger Pagodas</b><p>Walk the flat zigzag bridge and enter through the dragon's mouth, leaving through the tiger's. Free; allow 1–1.5 h. Climbing the seven-storey towers is optional and narrow.</p></div></li>
+        <li><time>12:00</time><div class="what"><b>Lunch: Gangyuan Beef Noodles or Ya Rou Zhen duck rice</b><p>Both in Yancheng, near Pier-2. Both reportedly close on Tuesdays, so Friday is safe.</p></div></li>
+        <li><time>13:15</time><div class="what"><b>Pier-2 Art Center</b><p>Warehouses, murals and the harbour light rail. Wander or rent a city bike.</p></div></li>
+        <li class="flex"><time>14:15</time><div class="what"><b>SunnyHills pineapple cakes and Pier-2 design shops</b> <span class="tag souv">souvenir</span><p>The free cake and tea tasting doubles as a sit-down break.</p></div></li>
+        <li class="move"><time>15:00</time><div class="what"><b>Ferry Gushan → Cijin</b><p>~10 min, every 10–20 min. Rent a four-seat surrey bike or e-bikes along the flat beach promenade, then snack on seafood street. Pick up packed dried squid there.</p></div></li>
+        <li class="flex"><time>17:00</time><div class="what"><b>Sizihwan sunset</b> <span class="tag flex">optional</span><p>Back on the ferry, a short walk from Gushan pier.</p></div></li>
+        <li><time>19:30</time><div class="what"><b>Dinner: Ruifeng Night Market</b><p>Kaohsiung Arena MRT. This is where locals go. It's closed Mondays and Wednesdays but open tonight. Liuhe, by the hotel, is the backup.</p></div></li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="day">
+    <summary><div class="dnum"><div class="w">Sat</div><div class="d">6</div><div class="w">Nov</div></div><div class="dtitle"><h3>Day 9 · Easy morning, fly home</h3><div class="base">No hotel</div></div><div class="dspend"><b>NT$535</b>per person</div></summary>
+    <div class="dbody">
+      <ol class="tt">
+        <li><time>08:30</time><div class="what"><b>Slow breakfast; last snack gifts</b> <span class="tag souv">souvenir</span><p>Carrefour or PX Mart for cheap snacks to share. Repack the heavy boxes into checked bags.</p></div></li>
+        <li><time>11:00</time><div class="what"><b>Check out; leave bags at the hotel</b></div></li>
+        <li class="flex"><time>11:30</time><div class="what"><b>Love River walk and lunch</b> <span class="tag flex">flexible</span></div></li>
+        <li class="move"><time>15:00</time><div class="what"><b>Collect bags; MRT Red Line to Kaohsiung Airport</b> <span class="tag fixed">fixed</span><p>~20 min. Be at the airport 2.5 h before an ~18:25 departure.</p></div></li>
+        <li class="move"><time>~18:35</time><div class="what"><b>Kaohsiung → Manila</b> <span class="tag fixed">fixed</span><p>~1 h 50 min; arrive ~20:15.</p></div></li>
+      </ol>
+    </div>
+  </details>
+  <nav class="tabnext"><a href="#route">← Summary</a><a href="#flights">Flights →</a></nav>
+</div></section>
+
+<section class="view" id="flights" hidden><div class="wrap">
+  <h2>Flights</h2>
+
+  <h3 style="font-size:1.25rem;margin:6px 0 12px">Manila → Taipei (Taoyuan)</h3>
+  <div class="fl">
+    <div class="flc rec"><h4>A · Philippine Airlines, Fri 29 Oct evening <span class="tag fixed">recommended</span></h4><div class="price">₱9,000<small>est. range ₱7,000–12,500</small></div><div class="times">MNL ~18:40 → TPE ~20:55 · 2 h 15 min · nonstop</div></div>
+    <div class="flc"><h4>B · Philippines AirAsia, Fri 29 Oct late</h4><div class="price">₱5,800<small>₱4,000–5,500 fare + ~₱1,500 bag</small></div><div class="times">MNL ~21:50 → TPE ~00:00 · 2 h 10 min · nonstop</div></div>
+    <div class="flc"><h4>C · Cebu Pacific, Sat 30 Oct early morning</h4><div class="price">₱6,000<small>₱4,500 fare + ~₱1,500 bag; can rise to ₱11,000+</small></div><div class="times">MNL ~06:35 → TPE ~09:05 · 2 h 30 min · nonstop</div></div>
+    <div class="flc"><h4>D · STARLUX Airlines, Fri 29 Oct midday</h4><div class="price">₱11,500<small>est. range ₱10,000–13,500</small></div><div class="times">MNL ~10:45 → TPE ~13:00 · 2 h 15 min · nonstop, daily</div></div>
+  </div>
+
+  <h3 style="font-size:1.25rem;margin:6px 0 12px">Kaohsiung → Manila</h3>
+  <div class="fl">
+    <div class="flc rec"><h4>A · Philippines AirAsia, Sat 6 Nov <span class="tag fixed">recommended</span></h4><div class="price">₱6,000<small>₱4,400–7,300 fare + ~₱1,500 bag</small></div><div class="times">KHH ~18:35 → MNL ~20:25 · 1 h 50 min · nonstop</div></div>
+    <div class="flc"><h4>B · Cebu Pacific, Sat 6 Nov</h4><div class="price">₱6,200<small>₱4,500–7,600 fare + ~₱1,500 bag</small></div><div class="times">KHH ~20:00 → MNL ~22:00 · 2 h · nonstop</div></div>
+    <div class="flc"><h4>C · Philippines AirAsia, Fri 5 Nov</h4><div class="price">₱6,000<small>₱4,400–7,300 fare + ~₱1,500 bag</small></div><div class="times">KHH ~18:35 → MNL ~20:25 · 1 h 50 min · nonstop</div></div>
+  </div>
+  <nav class="tabnext"><a href="#days">← Details</a><a href="#hotels">Hotels →</a></nav>
+</div></section>
+
+<section class="view" id="hotels" hidden><div class="wrap">
+  <h2>Hotels</h2>
+  <div class="hotels" id="hotelsList"></div>
+  <nav class="tabnext"><a href="#flights">← Flights</a><a href="#transport">Transport →</a></nav>
+</div></section>
+
+<section class="view" id="transport" hidden><div class="wrap">
+  <h2>Transport</h2>
+  <div class="tbl"><table class="stack">
+    <thead><tr><th>Leg</th><th>Mode</th><th>Time</th><th class="num">Fare NT$</th><th>Book</th></tr></thead>
+    <tbody>
+      <tr><td>Taoyuan Airport → Taipei Main</td><td>Airport MRT express</td><td>35–40 min</td><td class="num">160</td><td>Pay on the day with EasyCard</td></tr>
+      <tr><td>Taipei ⇄ Jiufen</td><td>Bus 1062 (Zhongxiao Fuxing Exit 2)</td><td>~1 h 25 min</td><td class="num">~90–120</td><td>No booking; queue early on weekends</td></tr>
+      <tr><td>Taipei → Taichung</td><td>HSR standard reserved</td><td>~50 min</td><td class="num">700</td><td>Opens 28 days ahead; early-bird up to 35% off</td></tr>
+      <tr><td>Taipei → Taichung (budget)</td><td>TRA Tze-Chiang express</td><td>~2 h</td><td class="num">~375</td><td>TRA website/app</td></tr>
+      <tr><td>Taichung ⇄ Sun Moon Lake</td><td>Tourist Shuttle 6670</td><td>~1 h 45 min</td><td class="num">~197</td><td>Reserve seats on Nantou Bus site, or buy the lake pass</td></tr>
+      <tr><td>Taichung → Chiayi</td><td>HSR</td><td>~25–35 min</td><td class="num">~370</td><td>Same as above</td></tr>
+      <tr><td>Chiayi HSR ⇄ Alishan</td><td>Tourist Shuttle 7329</td><td>~2 h 30 min</td><td class="num">278 cash / 244 card</td><td>FamiTicket or Alishan ticketing site</td></tr>
+      <tr><td>Chiayi TRA ⇄ Alishan</td><td>Shuttle 7322 (more departures)</td><td>~2 h 30 min</td><td class="num">240 cash / 211 card</td><td>Same; free HSR shuttle bus links the two stations</td></tr>
+      <tr><td>Chiayi → Alishan (optional)</td><td>Alishan Forest Railway</td><td>3.5–5 h</td><td class="num">~600</td><td>Official site, opens 14 days ahead, pay at once</td></tr>
+      <tr><td>Alishan ⇄ Zhushan</td><td>Sunrise train, round trip</td><td>~25 min each way</td><td class="num">150 each way</td><td>Alishan Station the day before</td></tr>
+      <tr><td>Alishan → Shenmu</td><td>Shenmu Line forest train</td><td>~10 min</td><td class="num">100</td><td>Alishan Station on the day</td></tr>
+      <tr><td>Chiayi → Zuoying</td><td>HSR</td><td>~30 min</td><td class="num">~410</td><td>Same as above</td></tr>
+      <tr><td>Formosa Blvd → KHH airport</td><td>Kaohsiung MRT Red Line</td><td>~20 min</td><td class="num">~35</td><td>EasyCard works on Kaohsiung MRT</td></tr>
+    </tbody>
+  </table></div>
+  <nav class="tabnext"><a href="#hotels">← Hotels</a><a href="#food">Food →</a></nav>
+</div></section>
+
+<section class="view" id="food" hidden><div class="wrap">
+  <h2>Food</h2>
+
+  <div class="city"><h3>Taipei <small>Days 1–3</small></h3><div class="eats">
+    <div class="eat"><b>Fuhang Soy Milk</b><div class="meta">Breakfast · Shandao Temple MRT · ~NT$100–150</div><p>Michelin Bib Gourmand breakfast institution. Tue–Sun 05:30–12:30, closed Mon. Cash, queue.</p></div>
+    <div class="eat"><b>Jin Feng Braised Pork Rice</b><div class="meta">Lunch / late · Roosevelt Rd, CKS Memorial Hall MRT · NT$40–150</div><p>The classic lu rou fan counter. Listings conflict on Monday closure, so don't plan on it Monday.</p></div>
+    <div class="eat"><b>Yong He Soy Milk King</b><div class="meta">Breakfast alternative · Da'an · under NT$100</div><p>24-hour soy milk and youtiao. Use it on Monday when Fuhang is shut.</p></div>
+    <div class="eat"><b>Ningxia Night Market</b><div class="meta">Dinner · near Zhongshan / Shuanglian MRT · NT$200–400</div><p>Compact and food-first. Liu Yu Zi's fried taro balls and Yuan Huan Pien's oyster omelette have both been Bib Gourmand listed. Fang Chia's chicken rice is nearby.</p></div>
+    <div class="eat"><b>Ximending snacks</b><div class="meta">Day 3 snacks · Ximen MRT · NT$100–250</div><p>Ay-Chung flour-rice noodles in a bonito broth, eaten standing outside, plus brown-sugar boba from one of the big chains in the district.</p></div>
+    <div class="eat"><b>Raohe Night Market · Fuzhou pepper buns</b><div class="meta">Dinner · Songshan MRT · NT$200–400</div><p>Market open ~17:00–24:00 daily. The clay-oven pepper bun stall by the east gate is the reason to go.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Jiufen <small>Day 3</small></h3><div class="eats">
+    <div class="eat"><b>Lai Ah Po Taro Balls</b><div class="meta">Dessert · Jishan St (level) · ~NT$50</div><p>This is the pick for this plan, because it's on the flat lane. It also has more flavours than A-Gan Yi.</p></div>
+    <div class="eat"><b>A-Gan Yi Taro Balls</b><div class="meta">Dessert · top of a stair climb · NT$50–60</div><p>This is the oldest taro-ball shop, with a sea-view seating room, open 09:00–20:00. Go only if the climb feels fine on the day.</p></div>
+    <div class="eat"><b>Amei Teahouse</b><div class="meta">Tea · Shuqi Rd stairs · NT$300–400</div><p>The lantern-hung teahouse in all the photos. Getting in means a flight of stairs down and back up.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Taichung &amp; Sun Moon Lake <small>Days 4–5</small></h3><div class="eats">
+    <div class="eat"><b>Chun Shui Tang (original store)</b><div class="meta">Tea &amp; snacks · No. 30 Siwei St · NT$150–350</div><p>Claims to have invented pearl milk tea. Sit-down, with dim sum and noodles.</p></div>
+    <div class="eat"><b>Miyahara</b><div class="meta">Ice cream &amp; gifts · No. 20 Zhongshan Rd · NT$150–250</div><p>Beside Taichung Station, in a restored 1927 clinic. 10:00–22:00.</p></div>
+    <div class="eat"><b>Fengjia Night Market</b><div class="meta">Dinner · Xitun · NT$250–400</div><p>Taiwan's largest; stalls open from midday to ~02:00. Big sausage-in-rice-sausage, flame-seared beef cubes.</p></div>
+    <div class="eat"><b>Taichung Second Market</b><div class="meta">Lunch · Central District · NT$100–200</div><p>Old covered market with braised pork rice, radish cakes, fruit. Mornings to mid-afternoon.</p></div>
+    <div class="eat"><b>Ita Thao street stalls</b><div class="meta">Lunch · Sun Moon Lake · NT$150–300</div><p>Thao village snacks: millet mochi, grilled boar sausage, local black tea.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Alishan <small>Days 6–7</small></h3><div class="eats">
+    <div class="eat"><b>Alishan village restaurants</b><div class="meta">Lunch / dinner · by the bus terminal · NT$150–300</div><p>Simple Taiwanese set meals, mountain vegetables, wasabi dishes. Few late options; eat by 19:00.</p></div>
+    <div class="eat"><b>Railway bento</b><div class="meta">Lunch · NT$100–150</div><p>The mountain's signature boxed lunch. Fenqihu's version is famous if you ride the train.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Kaohsiung <small>Days 7–9</small></h3><div class="eats">
+    <div class="eat"><b>Xing Long Ju</b><div class="meta">Breakfast · No. 186 Liuhe 2nd Rd · ~NT$100</div><p>Since 1954. Soup dumplings, fan tuan, soy milk. Pre-dawn to ~11:00, closed Mondays.</p></div>
+    <div class="eat"><b>Gangyuan Beef Noodles</b><div class="meta">Lunch · Yancheng · ~NT$110–200</div><p>Over 60 years old. Order the dry-tossed beef noodles. 10:30–20:00, reportedly closed Tue.</p></div>
+    <div class="eat"><b>Ya Rou Zhen</b><div class="meta">Lunch · No. 258 Wufu 4th Rd · ~NT$80–150</div><p>Michelin-listed duck rice and duck vermicelli. ~10:00–20:20, closed Tue. Expect a line.</p></div>
+    <div class="eat"><b>Liuhe Night Market</b><div class="meta">Dinner · Formosa Blvd MRT · NT$200–400</div><p>Daily ~17:00–02:00. Tourist-friendly; papaya milk and seafood.</p></div>
+    <div class="eat"><b>Ruifeng Night Market</b><div class="meta">Dinner · Kaohsiung Arena MRT · NT$200–400</div><p>Bigger and more local. Tue and Thu–Sun from ~16:00; closed Mon and Wed.</p></div>
+    <div class="eat"><b>Cijin seafood street</b><div class="meta">Snacks · by the ferry pier · NT$200–500</div><p>Pick live seafood and have it cooked, or just grilled squid on a stick.</p></div>
+  </div></div>
+  <nav class="tabnext"><a href="#transport">← Transport</a><a href="#souvenirs">Souvenirs →</a></nav>
+</div></section>
+
+<section class="view" id="souvenirs" hidden><div class="wrap">
+  <h2>Souvenirs</h2>
+
+  <div class="city"><h3>Taipei <small>Days 2–3</small></h3><div class="eats">
+    <div class="eat"><b>Pineapple cakes · Kuo Yuan Ye</b><div class="meta">Taipei 101 mall or Taipei Main Station · ~NT$300–500 a box</div><p>A long-established bakery with branches right on your route. You can buy them on Day 2 after the observatory, with no queue.</p></div>
+    <div class="eat"><b>Pineapple cakes · ChiaTe Bakery</b><div class="meta">Nanjing Sanmin MRT, near Raohe · ~NT$300–500 a box</div><p>Often rated the best in Taipei, but the queue can run an hour. Some 7-Elevens stock it too, so check one before queuing.</p></div>
+    <div class="eat"><b>Dried fruit, tea and herbs · Dihua Street</b><div class="meta">Day 3, around 15:45 · NT$100–600</div><p>Dried mango and guava, oolong in tins, and printed cotton bags from the fabric shops. Shops let you taste before you buy.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Jiufen <small>Day 3</small></h3><div class="eats">
+    <div class="eat"><b>Peanut brittle, taro snacks, tea · Jishan Street</b><div class="meta">On the level lane · NT$100–400</div><p>Packaged peanut candy and taro or sweet-potato snacks travel well. The teahouses sell their own tea in gift packs.</p></div>
+    <div class="eat"><b>Clay ocarinas · Jishan Street craft shops</b><div class="meta">NT$200–800</div><p>A Jiufen speciality that makes a small, light keepsake. Shops play them to show you the tone.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Taichung <small>Day 4</small></h3><div class="eats">
+    <div class="eat"><b>Sun cakes · Ziyou Road bakeries</b><div class="meta">~5 min walk from Taichung Station · ~NT$250–400 a box</div><p>Sun cakes are flaky pastries filled with malt sugar, and they're Taichung's signature gift. Ziyou Road, the old street near the station, is lined with sun-cake shops.</p></div>
+    <div class="eat"><b>Pineapple cakes and chocolate · Miyahara</b><div class="meta">Beside Taichung Station · ~NT$300–700</div><p>The gift boxes look like old books. They're the best-looking boxes of the trip.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Sun Moon Lake <small>Day 5</small></h3><div class="eats">
+    <div class="eat"><b>Ruby Red No. 18 black tea · Ita Thao or Shuishe tea shops</b><div class="meta">~NT$300–800 a tin</div><p>The lake's famous black tea, with a cinnamon-and-mint aroma. Quality varies in the tourist shops, so taste before you buy.</p></div>
+    <div class="eat"><b>Thao crafts · Ita Thao</b><div class="meta">NT$150–600</div><p>Woven bags and carved pieces from the lake's indigenous community.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Alishan <small>Days 6–7</small></h3><div class="eats">
+    <div class="eat"><b>High-mountain oolong · village tea shops</b><div class="meta">Inside the recreation area · ~NT$400–1,500 per 150 g</div><p>Alishan's best-known product. Shops pour tastings; buy vacuum-packed tins to keep it fresh.</p></div>
+    <div class="eat"><b>Wasabi peanuts and sauce</b><div class="meta">Village shops · NT$100–250</div><p>Wasabi is grown on these slopes. The peanuts are light, cheap and easy to share.</p></div>
+    <div class="eat"><b>Sunrise cake and millet mochi · Richu store</b><div class="meta">Alishan village · ~NT$200–400</div><p>Local sweets made with millet grown at altitude. Buy them on the last morning.</p></div>
+  </div></div>
+
+  <div class="city"><h3>Kaohsiung <small>Days 8–9</small></h3><div class="eats">
+    <div class="eat"><b>Pineapple cakes · SunnyHills, near Pier-2</b><div class="meta">~NT$300 for a box of 6</div><p>Pure-pineapple cakes with a free tasting of cake and tea when you walk in.</p></div>
+    <div class="eat"><b>Dried squid and seafood snacks · Cijin seafood street</b><div class="meta">By the ferry pier · NT$150–500</div><p>Vacuum-packed snacks from the fishing island.</p></div>
+    <div class="eat"><b>Design gifts · Pier-2 Art Center shops</b><div class="meta">NT$150–1,000</div><p>Prints, tote bags and stationery by Kaohsiung designers.</p></div>
+    <div class="eat"><b>Last-minute snacks · Carrefour, PX Mart or KHH airport</b><div class="meta">NT$50–300</div><p>Supermarkets are the cheapest place for snack gifts to share at the office. The airport has pineapple cakes if you forget.</p></div>
+  </div></div>
+
+  <nav class="tabnext"><a href="#food">← Food</a><a href="#budget">Budget →</a></nav>
+</div></section>
+
+<section class="view" id="budget" hidden><div class="wrap">
+  <h2>Budget</h2>
+
+  <div class="bb">
+    <div class="bb-main">
+      <div class="bgrp"><h3><span class="mono">1</span> Flights <small>per person, one way, with a checked bag</small></h3>
+        <div id="optOut"></div>
+        <div id="optRet"></div>
+      </div>
+
+      <div class="bgrp"><h3><span class="mono">2</span> Hotels <small>price per night for all four</small></h3>
+        <div class="quick"><span class="label">Set all to</span><button type="button" data-all="lean">Lean</button><button type="button" data-all="planned">Mid</button><button type="button" data-all="comfort">Comfort</button></div>
+        <div id="optHotels"></div>
+      </div>
+
+      <div class="bgrp"><h3><span class="mono">3</span> Transport choices <small>per person</small></h3>
+        <div id="optTch"></div>
+        <div id="optSml"></div>
+        <div id="optAli"></div>
+      </div>
+
+      <div class="bgrp"><h3><span class="mono">4</span> Activities <small>per person; tick what you'll do</small></h3><div class="opts" id="optAct"></div></div>
+
+      <div class="bgrp"><h3><span class="mono">5</span> Food <small>per person per day</small></h3><div id="optFood"></div></div>
+    </div>
+
+    <aside class="bb-sum" aria-live="polite">
+      <div class="label">Group total</div>
+      <div class="v mono" id="tGroup">—</div>
+      <div class="sumrow"><span>Per person</span><b class="mono" id="tPP">—</b></div>
+      <div class="sumrow"><span>Per person per day</span><b class="mono" id="tDay">—</b></div>
+      <div class="sumrow"><span>Nights</span><b class="mono" id="tNights">—</b></div>
+      <button type="button" id="resetB" style="margin-top:12px;width:100%">Reset to recommended</button>
+    </aside>
+  </div>
+
+  <h3 style="font-size:1.25rem;margin:30px 0 10px">Breakdown</h3>
+  <div class="tbl"><table class="stack">
+    <thead><tr><th>Item</th><th>Your choice</th><th class="num">Per person ₱</th><th class="num">Group ₱</th></tr></thead>
+    <tbody id="bRows"></tbody>
+    <tfoot><tr><td colspan="2">Total</td><td class="num" id="fPP"></td><td class="num" id="fG"></td></tr></tfoot>
+  </table></div>
+  <nav class="tabnext"><a href="#souvenirs">← Souvenirs</a><a href="#checklist">Checklist →</a></nav>
+</div></section>
+
+<section class="view" id="checklist" hidden><div class="wrap">
+  <h2>Booking &amp; prep</h2>
+  <ul class="check" id="checks">
+    <li><input type="checkbox" id="c1"><label for="c1">Confirm passports are valid 6+ months past 6 Nov 2027<small>Taiwan's visa-free rule requires it.</small></label><span class="when">Now</span></li>
+    <li><input type="checkbox" id="c2"><label for="c2">Book flights MNL→TPE and KHH→MNL with change options<small>Open-jaw: two one-ways. Include checked bags if flying a low-cost carrier.</small></label><span class="when">Now – Jun 2027</span></li>
+    <li><input type="checkbox" id="c3"><label for="c3">Book refundable hotels: Taipei, Taichung, Kaohsiung<small>Filter for ≤5 min walk to the station and quad or family rooms.</small></label><span class="when">3–4 months ahead</span></li>
+    <li><input type="checkbox" id="c4"><label for="c4">Book Alishan lodging inside the recreation area<small>Rooms are few. Check whether breakfast and a shuttle to the station are included.</small></label><span class="when">3 months ahead</span></li>
+    <li><input type="checkbox" id="c5"><label for="c5">Watch for Taiwan's visa-free extension for Filipinos<small>Current scheme ends 31 Jul 2027. If not renewed, apply for a Taiwan visa or eVisa.</small></label><span class="when">Jul 2027</span></li>
+    <li><input type="checkbox" id="c6"><label for="c6">Book HSR: Taipei→Taichung, Taichung→Chiayi, Chiayi→Zuoying<small>Opens 28 days before; early-bird seats go first.</small></label><span class="when">~4 Oct 2027</span></li>
+    <li><input type="checkbox" id="c7"><label for="c7">Reserve bus 7329 up (3 Nov) and down (4 Nov)<small>FamiTicket or the Alishan ticketing site.</small></label><span class="when">2–4 weeks ahead</span></li>
+    <li><input type="checkbox" id="c8"><label for="c8">Reserve bus 6670 seats or buy the Sun Moon Lake pass</label><span class="when">1–2 weeks ahead</span></li>
+    <li><input type="checkbox" id="c9"><label for="c9">Optional: Alishan Forest Railway tickets<small>Opens 14 days ahead; payment is due immediately.</small></label><span class="when">20 Oct 2027</span></li>
+    <li><input type="checkbox" id="c10"><label for="c10">Pay Philippine travel tax and register on eTravel</label><span class="when">Week before</span></li>
+    <li><input type="checkbox" id="c17"><label for="c17">Obtain Travel Authority, Certificate of Enrollment or Proof of Employment<small>For Philippine immigration on departure.</small></label><span class="when">1 month before</span></li>
+    <li><input type="checkbox" id="c11"><label for="c11">Bring cash in NT$ for night markets; get EasyCards and eSIMs</label><span class="when">On arrival</span></li>
+    <li><input type="checkbox" id="c14"><label for="c14">Asthma prep: inhalers and a spare in carry-on, with prescriptions<small>Take a doctor's note if carrying larger quantities. Get travel insurance that covers pre-existing conditions. Pack N95 or KF94 masks for smoky night markets and temples, and a scarf for Alishan's cold air.</small></label><span class="when">Before you fly</span></li>
+    <li><input type="checkbox" id="c15"><label for="c15">Check daily air quality on Taiwan's Ministry of Environment AQI app<small>Southern Taiwan sometimes sees haze in autumn. On a poor-air day, shorten the outdoor sections.</small></label><span class="when">Daily on trip</span></li>
+    <li><input type="checkbox" id="c16"><label for="c16">Book a Taipei 101 time slot for ~16:30 on Sat 30 Oct</label><span class="when">1–2 weeks ahead</span></li>
+    <li><input type="checkbox" id="c12"><label for="c12">Pack warm layers for Alishan and umbrellas for Jiufen</label><span class="when">Packing</span></li>
+    <li><input type="checkbox" id="c13"><label for="c13">Check the Central Weather Administration for late typhoons</label><span class="when">Week before</span></li>
+  </ul>
+  <nav class="tabnext"><a href="#budget">← Budget</a><span></span></nav>
+</div></section>
+
+
+
+
+
+<script>
+(function(){
+  var RATE=1.95, TAX=1620, BASE_T=2420, ALI_ENTRY=300, MISC=650;
+  var TIER_LABEL={lean:'Lean',planned:'Mid',comfort:'Comfort'};
+  // [name, note, NT$ per night for all four]
+  var HOTELS={
+    tpe:{city:'Taipei',near:'Taipei Main Station',
+      lean:[['Hotel Relax','Near Taipei Main Station; your quote NT$13,017 for 3 nights',4339],['Hotel Puri Taipei Station Branch','Underground link to the MRT; Agoda 8.4; before taxes',3974],['Green World Taipei Station','Large rooms, free cancellation; Agoda 8.3; before taxes',4694]],
+      planned:[['CityInn Hotel Taipei Station Branch II','5 min walk; reliable and clean',5000],['CityInn Hotel Taipei Station Branch III','Same chain, beside Q Square',5200],['Roaders Plus Hotel Taipei Station','Family rooms; walk to Ningxia',5800]],
+      comfort:[['Cosmos Hotel Taipei','Opposite the station',9000],['Caesar Park Hotel Taipei','Directly across from the station',11000],['Hotel Resonance Taipei (Hilton Tapestry)','Boutique, ~8 min walk',12000]]},
+    tch:{city:'Taichung',near:'Taichung TRA Station',
+      lean:[['Bravo Hotel','~100 m from the station',2200],['Chance Hotel','Beside the station; your quote NT$2,880 for 2 nights',1440],['Twinstar Hotel','~230 m; plain rooms',2800]],
+      planned:[['Norway Forest Travel Hotel 1','Quad rooms with big beds',3400],['Palmer Hotel','~400 m; larger rooms',3600],['CityInn Hotel Taichung Station','~150 m; very well reviewed',3800]],
+      comfort:[['Inhouse Hotel Taichung','~750 m; elegant lobby',5000],['Park City Hotel Central Taichung','Full-service, old town',6000],['Inhouse Hotel Grand','Spacious quads, good breakfast',6500]]},
+    ali:{city:'Alishan',near:'Alishan village, inside the recreation area',
+      lean:[['Gau Shan Ching Hotel','Cheapest in the park; mixed reviews',4200],['Alishan Gou Hotel','Quads, free shuttle; no breakfast',4800],['Ying Shan Hotel','In the village; small rooms',5200]],
+      planned:[['Alishan Gou Hotel, Building A quad','Quieter, with a shuttle',5500],['Ying Shan Hotel, larger quad','Central; ask for a window',6000],['Alishan Shermuh Hotel','Newer rooms; short walk',7000]],
+      comfort:[['Alishan Shermuh Hotel, best rooms','Fallback if Alishan House is full',8500],['Alishan House, historic wing quad','Breakfast and shuttle included',13000],['Alishan House, modern deluxe quad','Larger, some with fireplaces',16000]]},
+    khh:{city:'Kaohsiung',near:'Formosa Boulevard MRT',
+      lean:[['Kindness Hotel – Kaohsiung Main Station','~7 min walk to Kaohsiung Main; your quote NT$7,196 for 2 nights',3598],['Inns Hotel (癮室)','Design budget, near Cianjin MRT',2600],['Jia’s Inn Station','Family rooms; near Kaohsiung Main',2800]],
+      planned:[['Legend Hotel Kaohsiung','Near Liuhe; two MRT stations close',3400],['Hotel Papa Whale – Formosa Boulevard','Quad and family rooms',3600],['Kung Shang Design Hotel','Boutique, ~7 min to the MRT',4000]],
+      comfort:[['JÒHŌ HOTEL Kaohsiung','~550 m; modern rooms',5500],['Brio Hotel','Rooftop, good breakfast',6500],['Hotel Dùa','1 min from the MRT; top rated',7500]]}
+  };
+  var OPTS={
+    out:[{id:'A',name:'A · Philippine Airlines, Fri 29 Oct',note:'MNL ~18:40 → TPE ~20:55. Recommended.',php:9000},
+         {id:'B',name:'B · Philippines AirAsia, Fri 29 Oct',note:'MNL ~21:50 → TPE ~00:00. Overnight airport bus to the hotel.',php:5800},
+         {id:'C',name:'C · Cebu Pacific, Sat 30 Oct',note:'MNL ~06:35 → TPE ~09:05. One fewer Taipei night.',php:6000},
+         {id:'D',name:'D · STARLUX Airlines, Fri 29 Oct',note:'MNL ~10:45 → TPE ~13:00. Full-service; adds a free Friday afternoon.',php:11500}],
+    ret:[{id:'A',name:'A · Philippines AirAsia, Sat 6 Nov',note:'KHH ~18:35 → MNL ~20:25. Recommended.',php:6000},
+         {id:'B',name:'B · Cebu Pacific, Sat 6 Nov',note:'KHH ~20:00 → MNL ~22:00.',php:6200},
+         {id:'C',name:'C · Philippines AirAsia, Fri 5 Nov',note:'KHH ~18:35 → MNL ~20:25. One fewer Kaohsiung night.',php:6000}],
+    tch:[{id:'hsr',name:'High-speed rail',note:'~50 min plus a 12-min local train. Recommended.',nt:700},
+         {id:'tra',name:'TRA Tze-Chiang express',note:'~2 h, straight into Taichung Station.',nt:375}],
+    sml:[{id:'pass',name:'Sun Moon Lake Tourist Shuttle Pass',note:'Round-trip bus, boat, ropeway, lake bus. Recommended.',nt:920},
+         {id:'basic',name:'Bus and boat only',note:'Skips the ropeway.',nt:694}],
+    ali:[{id:'bus',name:'Bus 7329 from Chiayi HSR',note:'~2 h 30 min, bags stay in HSR lockers. Recommended.',nt:244},
+         {id:'rail',name:'Alishan Forest Railway from Chiayi TRA',note:'~3.5–5 h, scenic; books out 14 days ahead.',nt:600}],
+    act:[{id:'t101',name:'Taipei 101 observatory',note:'Sunset on Day 2, by elevator.',nt:600,def:true},
+         {id:'ebike',name:'E-bikes at Sun Moon Lake',note:'Lakeside path, Day 5 (estimate).',nt:300,def:true},
+         {id:'surrey',name:'Surrey bike on Cijin',note:'Four-seat bike along the beach, Day 8 (estimate).',nt:150,def:true},
+         {id:'amei',name:'Tea at Amei Teahouse, Jiufen',note:'Involves stairs; Day 3.',nt:350,def:false},
+         {id:'gold',name:'Jinguashi Gold Museum',note:'Hillside walking; Day 3.',nt:80,def:false}],
+    food:[{id:'street',name:'Street food and night markets',note:'Mostly stalls and simple shops.',nt:600},
+          {id:'mixed',name:'Mixed',note:'Street food plus a sit-down meal most days. Recommended.',nt:800},
+          {id:'treat',name:'Sit-down most meals',note:'Restaurants, cafés, teahouses.',nt:1300}]
+  };
+  var DEFAULT={out:'A',ret:'A',outP:{A:9000,B:5800,C:6000,D:11500},retP:{A:6000,B:6200,C:6000},
+    hotel:{tpe:'lean:0',tch:'lean:1',ali:'lean:1',khh:'lean:0'},tch:'hsr',sml:'pass',ali:'bus',
+    act:{t101:true,ebike:true,surrey:true,amei:false,gold:false},food:'mixed'};
+  function clone(o){return JSON.parse(JSON.stringify(o))}
+  var st=clone(DEFAULT);
+  try{var sv=JSON.parse(localStorage.getItem('tw27budget')||'null');if(sv&&sv.hotel&&sv.outP){st=sv;delete st.souv;if(st.outP.D==null)st.outP.D=11500}}catch(e){}
+  function save(){try{localStorage.setItem('tw27budget',JSON.stringify(st))}catch(e){}}
+  function fmt(n){return '₱'+Math.round(n).toLocaleString('en-US')}
+  function nt(n){return 'NT$'+n.toLocaleString('en-US')}
+  function find(list,id){for(var i=0;i<list.length;i++)if(list[i].id===id)return list[i];return list[0]}
+  function hotelOf(k){var p=st.hotel[k].split(':'),h=HOTELS[k][p[0]][+p[1]]||HOTELS[k].lean[0];return {tier:p[0],name:h[0],note:h[1],price:h[2]}}
+
+  function radios(boxId,key,list,priceFn){
+    var box=document.getElementById(boxId),html='';
+    list.forEach(function(o){
+      html+='<label class="opt"><input type="radio" name="'+key+'" value="'+o.id+'"'+(st[key]===o.id?' checked':'')+'><span><b>'+o.name+'</b>'+(o.note?'<small>'+o.note+'</small>':'')+'</span><span class="pr">'+priceFn(o)+'</span></label>';
+    });
+    box.innerHTML=html;
+    box.querySelectorAll('input').forEach(function(i){i.addEventListener('change',function(){st[key]=i.value;update()})});
+  }
+  function flightOpts(boxId,key,list){
+    var box=document.getElementById(boxId),html='',pk=key+'P';
+    list.forEach(function(o){
+      html+='<label class="opt"><input type="radio" name="'+key+'" value="'+o.id+'"'+(st[key]===o.id?' checked':'')+'><span><b>'+o.name+'</b><small>'+o.note+'</small></span><span class="pr">'+fmt(o.php)+'</span></label>';
+    });
+    box.innerHTML=html;
+    box.querySelectorAll('input[type=radio]').forEach(function(i){i.addEventListener('change',function(){st[key]=i.value;update()})});
+  }
+  function selectOpt(boxId,key,label,list,priceFn){
+    var box=document.getElementById(boxId),sid='s_'+key,html='<div class="hsel"><label for="'+sid+'">'+label+'</label><select id="'+sid+'">';
+    list.forEach(function(o){html+='<option value="'+o.id+'"'+(st[key]===o.id?' selected':'')+'>'+o.name+' · '+priceFn(o)+'</option>'});
+    html+='</select><div class="hn" id="n_'+key+'"></div></div>';
+    box.innerHTML=html;
+    var sel=document.getElementById(sid), note=document.getElementById('n_'+key);
+    function showNote(){note.textContent=find(list,st[key]).note||''}
+    sel.addEventListener('change',function(){st[key]=sel.value;showNote();update()});
+    showNote();
+  }
+  function hotelSelects(){
+    var box=document.getElementById('optHotels'),html='';
+    ['tpe','tch','ali','khh'].forEach(function(k){
+      var c=HOTELS[k];
+      html+='<div class="hsel"><label for="h_'+k+'">'+c.city+' <span style="font-family:var(--body);font-weight:400;color:var(--muted);font-size:.85rem">near '+c.near+'</span></label><select id="h_'+k+'">';
+      ['lean','planned','comfort'].forEach(function(t){
+        html+='<optgroup label="'+TIER_LABEL[t]+'">';
+        c[t].forEach(function(h,i){var v=t+':'+i;html+='<option value="'+v+'"'+(st.hotel[k]===v?' selected':'')+'>'+h[0]+' · '+nt(h[2])+'/night</option>'});
+        html+='</optgroup>';
+      });
+      html+='</select><div class="hn" id="hn_'+k+'"></div></div>';
+    });
+    box.innerHTML=html;
+    ['tpe','tch','ali','khh'].forEach(function(k){document.getElementById('h_'+k).addEventListener('change',function(e){st.hotel[k]=e.target.value;update()})});
+  }
+  function checks(){
+    var box=document.getElementById('optAct'),html='';
+    OPTS.act.forEach(function(o){html+='<label class="opt"><input type="checkbox" id="a_'+o.id+'"'+(st.act[o.id]?' checked':'')+'><span><b>'+o.name+'</b><small>'+o.note+'</small></span><span class="pr">'+nt(o.nt)+'</span></label>'});
+    box.innerHTML=html;
+    OPTS.act.forEach(function(o){document.getElementById('a_'+o.id).addEventListener('change',function(e){st.act[o.id]=e.target.checked;update()})});
+  }
+  function build(){
+    var ph=function(o){return fmt(o.php)}, n=function(o){return nt(o.nt)};
+    selectOpt('optOut','out','To Taipei',OPTS.out,ph); selectOpt('optRet','ret','Home from Kaohsiung',OPTS.ret,ph); hotelSelects();
+    selectOpt('optTch','tch','Taipei → Taichung',OPTS.tch,n);
+    selectOpt('optSml','sml','Sun Moon Lake day',OPTS.sml,n);
+    selectOpt('optAli','ali','Up to Alishan',OPTS.ali,n);
+    checks();
+    selectOpt('optFood','food','Food style',OPTS.food,function(o){return nt(o.nt)+'/day'});
+  }
+  function calc(){
+    var n={tpe:st.out==='C'?2:3,tch:2,ali:1,khh:st.ret==='C'?1:2};
+    var nights=n.tpe+n.tch+n.ali+n.khh, foodDays=st.ret==='C'?7:8, tripDays=(st.out==='C'?8:9)-(st.ret==='C'?1:0);
+    var hotelGroup=0,hparts=[];
+    ['tpe','tch','ali','khh'].forEach(function(k){var h=hotelOf(k);hotelGroup+=h.price*n[k];hparts.push(HOTELS[k].city+': '+h.name+' ×'+n[k])});
+    var o=find(OPTS.out,st.out), r=find(OPTS.ret,st.ret);
+    var tch=find(OPTS.tch,st.tch), sml=find(OPTS.sml,st.sml), ali=find(OPTS.ali,st.ali);
+    var trans=BASE_T+tch.nt+sml.nt+ali.nt;
+    var acts=OPTS.act.filter(function(a){return st.act[a.id]}), actNT=ALI_ENTRY+acts.reduce(function(s,a){return s+a.nt},0);
+    var food=find(OPTS.food,st.food);
+    var rows=[
+      ['Flight to Taipei',o.name.slice(4),o.php],
+      ['Flight home',r.name.slice(4),r.php],
+      ['Philippine travel tax','Economy rate',TAX],
+      ['Hotels, '+nights+' nights',hparts.join('<br>')+'<br><span style="color:var(--muted)">'+nt(hotelGroup)+' for the group, split four ways</span>',hotelGroup/4*RATE],
+      ['Transport','To Taichung by '+tch.name+'; '+sml.name+'; up to Alishan by '+ali.name.split(' from')[0]+(st.out==='B'?'; overnight airport bus':'')+' (plus fixed legs)',trans*RATE],
+      ['Activities','Alishan entry'+(acts.length?', '+acts.map(function(a){return a.name}).join(', '):''),actNT*RATE],
+      ['Food',food.name+', '+foodDays+' days × '+nt(food.nt),food.nt*foodDays*RATE],
+      ['eSIM, EasyCard deposit, misc','',MISC*RATE]
+    ];
+    var ground=0; rows.forEach(function(x,i){if(i>=3)ground+=x[2]});
+    var pp=0; rows.forEach(function(x){pp+=x[2]});
+    return {rows:rows,pp:pp,group:pp*4,perDay:ground/tripDays,nights:nights};
+  }
+
+  var STAY={tpe:'Fri 29 Oct – Mon 1 Nov · 3 nights',tch:'Mon 1 – Wed 3 Nov · 2 nights',ali:'Wed 3 – Thu 4 Nov · 1 night',khh:'Thu 4 – Sat 6 Nov · 2 nights'};
+  function renderHotelsTab(){
+    var box=document.getElementById('hotelsList'); if(!box) return; var html='';
+    var nN={tpe:st.out==='C'?2:3,tch:2,ali:1,khh:st.ret==='C'?1:2};
+    ['tpe','tch','ali','khh'].forEach(function(k){
+      var c=HOTELS[k];
+      html+='<div class="hcity"><h3>'+c.city+' <span style="font-family:var(--body);font-weight:400;font-size:.85rem;color:var(--muted)">near '+c.near+'</span></h3><div class="hstay">'+STAY[k]+'</div><div class="hgrid">';
+      ['lean','planned','comfort'].forEach(function(t){
+        var on=st.hotel[k].split(':')[0]===t;
+        html+='<div class="htier'+(on?' on':'')+'"><div class="label"><span>'+TIER_LABEL[t]+'</span></div><ol>';
+        c[t].forEach(function(h,i){
+          var picked=st.hotel[k]===t+':'+i;
+          html+='<li><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(h[0].split(',')[0]+' '+c.city)+'" target="_blank" rel="noopener">'+h[0]+'</a>'+(picked?'<span class="hpick">In budget</span>':'')+'<small>'+h[1]+'</small><span class="hprice">'+nt(h[2])+'/night · <b>'+nN[k]+(nN[k]>1?' nights':' night')+': '+nt(h[2]*nN[k])+' (≈'+fmt(h[2]*nN[k]*RATE)+')</b></span></li>';
+        });
+        html+='</ol></div>';
+      });
+      html+='</div></div>';
+    });
+    box.innerHTML=html;
+  }
+
+  function labelTables(){
+    document.querySelectorAll('table.stack').forEach(function(t){
+      var hs=[].map.call(t.querySelectorAll('thead th'),function(h){return h.textContent});
+      t.querySelectorAll('tbody tr, tfoot tr').forEach(function(r){
+        var col=0;[].forEach.call(r.children,function(td){var span=+td.getAttribute('colspan')||1;td.setAttribute('data-label',span>1?'':(hs[col]||''));col+=span});
+      });
+    });
+  }
+  function update(){
+    var r=calc(), tb=document.getElementById('bRows'); tb.innerHTML='';
+    r.rows.forEach(function(row){var tr=document.createElement('tr');tr.innerHTML='<td>'+row[0]+'</td><td style="color:var(--muted);min-width:180px">'+row[1]+'</td><td class="num">'+fmt(row[2])+'</td><td class="num">'+fmt(row[2]*4)+'</td>';tb.appendChild(tr)});
+    ['fPP','tPP'].forEach(function(id){document.getElementById(id).textContent=fmt(r.pp)});
+    ['fG','tGroup','stubTotal'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=fmt(r.group)});
+    document.getElementById('tDay').textContent=fmt(r.perDay);
+    document.getElementById('tNights').textContent=r.nights;
+    ['tpe','tch','ali','khh'].forEach(function(k){var h=hotelOf(k);document.getElementById('hn_'+k).innerHTML=TIER_LABEL[h.tier]+' · '+h.note+' · <a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(h.name.split(',')[0]+' '+HOTELS[k].city)+'" target="_blank" rel="noopener">Map</a>'});
+    renderHotelsTab();
+    labelTables();
+    save();
+  }
+  document.querySelectorAll('[data-all]').forEach(function(b){b.addEventListener('click',function(){var t=b.getAttribute('data-all');['tpe','tch','ali','khh'].forEach(function(k){st.hotel[k]=t+':1'});hotelSelects();update()})});
+  document.getElementById('resetB').addEventListener('click',function(){st=clone(DEFAULT);build();update()});
+  build(); update();
+
+  // Tabs: one section visible at a time, routed on the hash.
+  var views=[].slice.call(document.querySelectorAll('.view')), links=[].slice.call(document.querySelectorAll('.rail a'));
+  function show(){
+    var id=(location.hash||'#overview').slice(1); if(id==='summary')id='route'; var el=document.getElementById(id);
+    if(!el||!el.classList.contains('view')) id='overview';
+    views.forEach(function(v){v.hidden=v.id!==id});
+    links.forEach(function(a){if(a.getAttribute('href')==='#'+id){a.setAttribute('aria-current','page');try{a.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}}else a.removeAttribute('aria-current')});
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',show); show();
+
+  document.getElementById('openAll').addEventListener('click',function(){document.querySelectorAll('details.day').forEach(function(d){d.open=true})});
+  document.getElementById('closeAll').addEventListener('click',function(){document.querySelectorAll('details.day').forEach(function(d){d.open=false})});
+  var saved={}; try{saved=JSON.parse(localStorage.getItem('tw27checks')||'{}')}catch(e){}
+  document.querySelectorAll('#checks input').forEach(function(c){
+    if(saved[c.id])c.checked=true;
+    c.addEventListener('change',function(){saved[c.id]=c.checked;try{localStorage.setItem('tw27checks',JSON.stringify(saved))}catch(e){}});
+  });
+})();
+</script>
+
+</body></html>
